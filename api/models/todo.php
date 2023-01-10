@@ -19,9 +19,8 @@ class Todo
     $todos = array();
 
     while ($row = $query_result->fetch_assoc()) {
-      array_push($todos, "id"->$row["id"], "title"->$row["title"], "completed"->$row["completed"]);
+      $todos[] = ["id" => $row["id"], "title" => $row["title"], "completed" => $row["completed"]];
     }
-
 
     return json_encode($todos);
 
