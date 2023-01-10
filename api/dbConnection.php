@@ -1,29 +1,46 @@
 <?php
 class DBConnection
 {
-  private $connection;
+  private $mysqli;
 
   public function __construct()
   {
     include 'config.php';
-    $dsn = "mysql:host=localhost;dbname=react_php;charset=UTF8";
 
-    try {
-      $this->connection = new PDO($dsn, $user, $password);
-      $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $this->mysqli = new mysqli($host, $user, $password, $db);
 
-      echo "Connected successfully";
-
-    } catch (PDOException $error) {
-
-      die('Connection failed:' . $error->getMessage());
+    if ($this->mysqli->connect_error) {
+      die('Connection failed:' . $this->mysqli->connect_error);
     }
 
+    $this->mysqli->set_charset('utf8');
+
+    echo "Connected successfully \n";
   }
+
 
   public function getConnection()
   {
-    return $this->connection;
+    return $this->mysqli;
+  }
+
+  public function executeSQL()
+  {
+    try {
+      $sql = file_get_contents('db.sql');
+
+      if ($this->mysqli->multi_query($sql)) {
+
+        echo "SQL file executed successfully";
+      }
+    } catch (Exception $e) {
+      echo $e->getMessage();
+    }
+  }
+
+  public function close()
+  {
+    return $this->mysqli->close();
   }
 }
 
