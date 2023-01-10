@@ -26,6 +26,39 @@ class Todo
 
   }
 
+  public function create($title, $completed)
+  {
+    //* using string concatenation to include the value in a string
+    $query = "INSERT INTO todos (title, completed) VALUES('" . $title . "','" . $completed . "')";
+    $query_result = $this->db->query($query);
+
+    $this->checkQueryErrors($query, $query_result);
+
+    return $query_result;
+  }
+
+  public function edit($title, $id)
+  {
+    $query = "UPDATE todos SET title='" . $title . "' WHERE id= . $id";
+    $query_result = $this->db->query($query);
+
+    $this->checkQueryErrors($query, $query_result);
+
+    return $query_result;
+  }
+
+  public function delete($id)
+  {
+    $query = "DELETE FROM todos WHERE id = . $id";
+    $query_result = $this->db->query($query);
+
+    $this->checkQueryErrors($query, $query_result);
+
+    echo $query_result;
+
+    echo "Task deleted successful";
+  }
+
   //check if the query is successful or not 
   private function checkQueryErrors($query, $query_result)
   {
