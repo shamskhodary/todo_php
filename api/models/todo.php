@@ -54,7 +54,7 @@ class Todo
 
     $stmt->execute();
 
-    return $stmt;
+    echo "Task updated successfully";
   }
 
   public function delete($id)
@@ -66,10 +66,10 @@ class Todo
 
     $stmt->bind_param("i", $id);
 
+    //return true or false
     $stmt->execute();
-    echo $stmt;
 
-    return "Task deleted successful";
+    echo "Task deleted successful";
   }
 
   //check if the query is successful or not 
