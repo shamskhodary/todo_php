@@ -30,7 +30,7 @@ if ($path === '/todos') {
       // Convert the encoded json into php variable and the returned value is an associative array
       $data = json_decode($json, true);
 
-      $myTask = $todo->create($data["title"], $data["completed"]);
+      $todo->create($data["title"], $data["completed"]);
 
       echo 'Task created successfully';
 
@@ -59,6 +59,8 @@ if ($path === '/todos/' . $param) {
 
       $todo->edit($data["title"], $id);
 
+      echo "Task updated successfully";
+
     } catch (Exception $e) {
       echo $e->getMessage();
       exit();
@@ -68,6 +70,8 @@ if ($path === '/todos/' . $param) {
       try {
         $id = intval($param);
         $todo->delete($id);
+
+        echo "Task deleted successful";
 
       } catch (Exception $e) {
         echo $e->getMessage();
