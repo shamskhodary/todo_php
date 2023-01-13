@@ -74,6 +74,15 @@ if ($path === '/todos/' . $param) {
         exit();
       }
     }
+  } else {
+    $err = array(
+      "error" => array(
+        "status" => "404",
+        "message" => "Wrong method or URL"
+      )
+    );
+
+    echo json_encode($err);
   }
 }
 ?>
