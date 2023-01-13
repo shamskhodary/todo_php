@@ -12,57 +12,70 @@ class Todo
   public function getAll()
   {
     $query = 'SELECT * FROM todos';
-    $query_result = $this->db->query($query);
+    $stmt = $this->db->query($query);
 
-    $this->checkQueryErrors($query, $query_result);
+    $this->checkQueryErrors($query, $stmt);
 
     $todos = array();
 
-    while ($row = $query_result->fetch_assoc()) {
+    while ($row = $stmt->fetch_assoc()) {
       $todos[] = ["id" => $row["id"], "title" => $row["title"], "completed" => $row["completed"]];
     }
 
-    return json_encode($todos);
+    return $todos;
 
   }
 
   public function create($title, $completed)
   {
-    //* using string concatenation to include the value in a string
-    $query = "INSERT INTO todos (title, completed) VALUES('" . $title . "','" . $completed . "')";
-    $query_result = $this->db->query($query);
+    $query = "INSERT INTO todos (title, completed) VALUES(?, ?)";
+    $stmt = $this->db->prepare($query);
 
-    $this->checkQueryErrors($query, $query_result);
+    $this->checkQueryErrors($query, $stmt);
 
-    return $query_result;
+    //specifying variables types I want to bind,then the values sent to the server separately from the query
+    // good to avoid query injection
+    $stmt->bind_param("si", $title, $completed);
+
+    $stmt->execute();
+
+    return array("title" => $title, "completed" => $completed);
   }
 
   public function edit($title, $id)
   {
-    $query = "UPDATE todos SET title='" . $title . "' WHERE id= . $id";
-    $query_result = $this->db->query($query);
+    //* using string concatenation to include the value in a string
+    $query = "UPDATE todos SET title = ? WHERE id = ?";
+    $stmt = $this->db->prepare($query);
 
-    $this->checkQueryErrors($query, $query_result);
+    $this->checkQueryErrors($query, $stmt);
 
-    return $query_result;
+    $stmt->bind_param("si", $title, $id);
+
+    $stmt->execute();
+
+    return $stmt;
   }
 
   public function delete($id)
   {
-    $query = "DELETE FROM todos WHERE id = . $id";
-    $query_result = $this->db->query($query);
+    $query = "DELETE FROM todos WHERE id = ?";
+    $stmt = $this->db->prepare($query);
 
-    $this->checkQueryErrors($query, $query_result);
+    $this->checkQueryErrors($query, $stmt);
 
-    echo $query_result;
+    $stmt->bind_param("i", $id);
 
-    echo "Task deleted successful";
+    $stmt->execute();
+    echo $stmt;
+
+    return "Task deleted successful";
   }
 
   //check if the query is successful or not 
-  private function checkQueryErrors($query, $query_result)
+  private function checkQueryErrors($query, $stmt)
   {
-    if (!$query_result) {
+    if (!$stmt) {
       throw new ErrorException("Query Error:" . $query . "\nError:" . $this->db->error);
     }
   }
